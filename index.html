@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Auto-play + Resume</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0f1220;
+      --ink:#f4f4f4;
+      --chip:#171a2b;
+      --ink-dim:#cfd2e2;
+      --ylw:#F8E16C;
+      --mnt:#B7F0AD;
+      --lav:#CDB4FF;
+      --pch:#FFC6A8;
+    }
+
+    html,body{
+      margin:0;height:100%;
+      color:var(--ink);
+      font-family:"Press Start 2P",Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-size:10px;
+      letter-spacing:.4px;
+    }
+
+    #bgVideo{
+      position:fixed;inset:0;width:100%;height:100%;
+      object-fit:cover;z-index:-3;background:#000;
+      filter:saturate(105%) contrast(102%) brightness(96%);
+    }
+
+    .screen-tint{
+      position:fixed;inset:0;z-index:-2;
+      background:linear-gradient(0deg,rgba(15,18,32,.55),rgba(15,18,32,.35));
+    }
+
+    /* control strip (top-right small) */
+    .hud{
+      position:fixed;top:16px;right:12px;
+      display:flex;gap:6px;align-items:center;
+      padding:6px 8px;
+      background:rgba(23,26,43,.85);
+      color:var(--ink);
+      z-index:8;
+    }
+
+    button{
+      font:inherit;padding:6px 8px;
+      background:#eaeaea;color:#111;
+      border:none;outline:none;
+      cursor:pointer;user-select:none;
+    }
+    button:hover{filter:brightness(1.04);}
+    button:active{transform:translateY(1px);}
+    #showTimerBtn{background:var(--mnt);}
+    #hideTimerBtn{background:var(--lav);}
+
+    /* ✨ Pomodoro now top-left corner, smaller, minimalist */
+    #pomodoro-section{
+
+      display:none;
+      position:fixed;top:8%;right:12px;
+      width:220px;
+      padding:10px 10px 8px;
+      background:rgba(23,26,43,.9);
+      color:var(--ink);
+      z-index:6;
+    }
+
+    #pomodoro-section::before{
+      content:"POMODORO TIMER";
+      display:block;
+      font-size:8px;letter-spacing:1px;
+      color:var(--ink-dim);
+      margin-bottom:6px;
+      box-shadow:inset 0 -1px 0 rgba(255,255,255,.08);
+      padding-bottom:4px;
+    }
+
+    #timer{
+      margin:0 0 6px 0;
+      font-size:28px;letter-spacing:1px;
+      text-align:center;
+      padding:6px 0;
+      background:rgba(255,255,255,.05);
+      color:var(--ink);
+      text-shadow:0 1px 0 #000;
+    }
+
+    #pomodoro-section button{
+      width:100%;
+      margin-top:6px;
+      text-transform:lowercase;
+      font-size:8px;
+      padding:6px 0;
+    }
+    #reset { background:var(--pch); }
+    #stop  { background:var(--lav); color:#111; }
+    #resume{ background:var(--mnt); }
+
+    /* 🎵 UI moved to bottom-left corner */
+    .ui{
+      position:fixed;left:17px;bottom:28px;
+      display:flex;gap:6px;align-items:center;
+      padding:8px 8px;
+      background:rgba(23,26,43,.85);
+      color:var(--ink);
+      z-index:7;
+
+    }
+
+    .ui button{
+      padding:6px 8px;font-size:14px;
+    }
+    .ui #prevBtn{background:var(--pch);}
+    .ui #playBtn{background:var(--ylw);}
+    .ui #nextBtn{background:var(--mnt);}
+    .ui .name{
+      margin-left:9px;font-size:15px;color:var(--ink-dim);
+      max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+
+    @media (max-width:640px){
+      #pomodoro-section{width:180px;top:8px;left:8px;}
+      #timer{font-size:22px;}
+      .ui{left:8px;bottom:8px;}
+    }
+
+    .fullscreen-btn{
+        margin-left: 90%;margin-top: 1.5%;font-weight:bolder;
+    }
+  </style>
+</head>
+
+<body>
+     <button class="fullscreen-btn" id="fullscreen-btn">『 』</button>
+
+  <video id="bgVideo" autoplay muted loop playsinline></video>
+  <div class="screen-tint" aria-hidden="true"></div>
+
+  <div class="hud">
+    <button id="showTimerBtn">Start</button>
+    <button id="hideTimerBtn" style="display:none;">Hide</button>
+  </div>
+
+  <!-- top-left Pomodoro -->
+  <section id="pomodoro-section">
+    <h1 id="timer">60:00</h1>
+    <button id="reset">Start</button>
+    <button id="stop">Pause</button>
+    <button id="resume">Resume</button>
+  </section>
+
+  <!-- bottom-left player UI -->
+  <div class="ui" >
+    <button id="prevBtn">Prev</button>
+    <button id="playBtn">Pause</button>
+    <button id="nextBtn">Next</button>
+    <span class="name" id="nowName"></span>
+    <span> ▶ •၊၊||၊|။||။‌‌‌‌‌၊|• 0:10▶︎ </span>
+  </div>
+
+  <audio id="player" preload="auto"></audio>
+
+  <script src="script.js"></script>
+  <script src="pomorado.js"></script>
+</body>
+</html>
